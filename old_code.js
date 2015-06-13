@@ -11,13 +11,12 @@ var game;
 var Phaser;
 var cursors;
 var randomNumber;
-var dantat2;
-var dantats = [];
 
 
 
 
 var preload = function() {
+
     game.load.image('ufo', 'stick figure.png');
     game.load.image('basketball', 'basketball.png');
     game.load.image('skirt', 'skirt.png');
@@ -39,12 +38,10 @@ var createNewSprite = function(spriteName) {
     var randomY = generateRandomNumberWithMax(300);
     
     var myNewSprite = game.add.sprite(randomX, randomY, spriteName);
-    debugger
-    // game.add.sprite
     game.physics.enable(myNewSprite, Phaser.Physics.ARCADE);
     
-    myNewSprite.body.velocity.x = generateRandomNumberWithMax(1000);
-    myNewSprite.body.velocity.y = generateRandomNumberWithMax(1000);;
+    myNewSprite.velocity.x = generateRandomNumberWithMax(1000);
+    myNewSprite.velocity.y = generateRandomNumberWithMax(1000);;
     
     myNewSprite.body.collideWorldBounds = true;
     myNewSprite.body.bounce.setTo(1, 1);
@@ -52,37 +49,65 @@ var createNewSprite = function(spriteName) {
     return myNewSprite;
 }
 
-var createAllTheDantat = function(numberOfDantat) {
-    for (var count = 0; count < numberOfDantat; count++) {
-        createNewSprite('dantat');
-    }
-}
-
-// objects colliding with each other can use for loops
-
 
 var create = function() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.stage.backgroundColor = '#FFFFFF';
     
-    // basketball = createNewSprite('basketball');
-    // dantat = createNewSprite('dantat');
-    // skirt = createNewSprite('skirt');
-    // cat = createNewSprite('cat');
-    
-    // createAllTheDantat(10);
-    for(var count = 0; count<100; count++) {
-        // game.load.image(dantats[count])
-        dantats[count] = createNewSprite('dantat');
-    }
+    debugger
+    basketball = createNewSprite('basketball');
+    dantat = createNewSprite('dantat');
     
     // Create a ufo sprite as player.
-    ufo = game.add.sprite(-100, -100, 'ufo');
+    ufo = game.add.sprite(0, 240, 'ufo');
     ufo.anchor.setTo(0.5, 0.5);
+    
+
+    var randomY = generateRandomNumberWithMax(300);
+    var randomX = generateRandomNumberWithMax(1000);
+    var basketball1 = game.add.sprite(randomX, randomY, 'basketball'); // XXX
+    
+    debugger
+    var basketball2 = createNewSprite('basketball');
+
+    skirt = game.add.sprite(randomX, randomY, 'skirt');
+    cat = game.add.sprite(randomX, randomY, 'cat');
+    dantat = game.add.sprite(randomX, randomY, 'dantat');
+    
+    // Make the default camera follow the ufo.
     game.camera.follow(ufo);
-    game.physics.enable(ufo, Phaser.Physics.ARCADE); // XXX
+    
+
+    game.physics.enable([basketball, skirt, ufo, cat, dantat], Phaser.Physics.ARCADE); // XXX
+    game.physics.enable(skirt, Phaser.Physics.ARCADE); // XXX
+    
+
+    basketball.body.velocity.y=700; // XXX
+    basketball.body.velocity.x=700; // XXX
+    
+    skirt.body.velocity.y=700;
+    skirt.body.velocity.x=600;
+    
+    cat.body.velocity.y=300;
+    cat.body.velocity.x=450;
+    
+    dantat.body.velocity.y=200;
+    dantat.body.velocity.x=1000;
+    
+    skirt.body.collideWorldBounds = true;
+    skirt.body.bounce.setTo(1, 1);
+    
+    basketball.body.collideWorldBounds = true; // XXX
+    basketball.body.bounce.setTo(1, 1); // XXX
+    
+    cat.body.collideWorldBounds = true;
+    cat.body.bounce.setTo(1, 1);
+    
+    dantat.body.collideWorldBounds = true;
+    dantat.body.bounce.setTo(1, 1);
     
     cursors = game.input.keyboard.createCursorKeys();
+    
     spaceKey=this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(togglePause, this);
 };
@@ -91,8 +116,6 @@ var create = function() {
 
 
 var update = function() {
-    
-    
     
     var gameIsRunning = game.physics.arcade.isPaused === false;
     if (gameIsRunning)  {
@@ -131,22 +154,22 @@ var update = function() {
     
     
   
-    // if (basketball.y > WIDTH) {
-    //     basketball.y = 0;
-    // }
+    if (basketball.y > WIDTH) {
+        basketball.y = 0;
+    }
     
     
-    // if (skirt.y > WIDTH) {
-    //     skirt.y = 0;
-    // }
+    if (skirt.y > WIDTH) {
+        skirt.y = 0;
+    }
     
-    // if (cat.y > WIDTH) {
-    //     cat.y = 0;    
-    // }
+    if (cat.y > WIDTH) {
+        cat.y = 0;    
+    }
     
-    // if (dantat.y > WIDTH) {
-    //     dantat.y = 0;
-    // }
+    if (dantat.y > WIDTH) {
+        dantat.y = 0;
+    }
     
     ufo.y += 0;
     if (ufo.y > HEIGHT) 
@@ -166,21 +189,19 @@ var update = function() {
         alert("YOU WIN LIFE");
     }
     
-    for (var count = 0; count < 3; count++) {
-        game.physics.arcade.collide(ufo, dantats[count], collisionHandler);
-    }
     
-    // game.physics.arcade.collide(skirt, ufo, collisionHandler, null, this);
-    // game.physics.arcade.collide(cat, ufo, collisionHandler, null, this);
-    // game.physics.arcade.collide(basketball, ufo, collisionHandler, null, this);
-    // game.physics.arcade.collide(dantat, ufo, collisionHandler, null, this);
     
-    // game.physics.arcade.collide(skirt, basketball);
-    // game.physics.arcade.collide(skirt, cat);
-    // game.physics.arcade.collide(basketball, cat);
-    // game.physics.arcade.collide(skirt, dantat);
-    // game.physics.arcade.collide(cat, dantat);
-    // game.physics.arcade.collide(basketball, dantat);
+    game.physics.arcade.collide(skirt, ufo, collisionHandler, null, this);
+    game.physics.arcade.collide(cat, ufo, collisionHandler, null, this);
+    game.physics.arcade.collide(basketball, ufo, collisionHandler, null, this);
+    game.physics.arcade.collide(dantat, ufo, collisionHandler, null, this);
+    
+    game.physics.arcade.collide(skirt, basketball);
+    game.physics.arcade.collide(skirt, cat);
+    game.physics.arcade.collide(basketball, cat);
+    game.physics.arcade.collide(skirt, dantat);
+    game.physics.arcade.collide(cat, dantat);
+    game.physics.arcade.collide(basketball, dantat);
     
 };
     
